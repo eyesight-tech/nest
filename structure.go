@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -194,6 +195,7 @@ func (s *Structure) setStructure(body []byte) *APIError {
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Println("Error before redirect! ", err)
 		apiError := &APIError{
 			Error:       "http_error",
 			Description: err.Error(),
@@ -207,6 +209,7 @@ func (s *Structure) setStructure(body []byte) *APIError {
 		req.Header.Set("Content-Type", "application/json")
 		response, err := client.Do(req)
 		if err != nil {
+			fmt.Println("Error after redirect! ", err)
 			apiError := &APIError{
 				Error:       "http_error",
 				Description: err.Error(),
