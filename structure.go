@@ -200,6 +200,21 @@ func (s *Structure) setStructure(body []byte) *APIError {
 		}
 		return apiError
 	}
+	if resp.Request.URL != nil {
+		s.Client.RedirectURL = resp.Request.URL.Scheme + "://" + resp.Request.URL.Host
+		url := s.Client.RedirectURL + "/structures/" + s.StructureID + "?auth=" + s.Client.Token
+		req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		response, err := client.Do(req)
+		if err != nil {
+			apiError := &APIError{
+				Error:       "http_error",
+				Description: err.Error(),
+			}
+			return apiError
+		}
+		resp = response
+	}
 	body, _ = ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if resp.StatusCode == 200 {
