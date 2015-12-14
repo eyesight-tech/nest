@@ -128,7 +128,7 @@ func (t *Thermostat) setThermostat(body []byte) *APIError {
 		}
 		return apiError
 	}
-	if resp.Request.URL != nil {
+	if resp.StatusCode == 307 {
 		t.Client.RedirectURL = resp.Request.URL.Scheme + "://" + resp.Request.URL.Host
 		url := t.Client.RedirectURL + "/devices/thermostats/" + t.DeviceID + "?auth=" + t.Client.Token
 		req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(body))

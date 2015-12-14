@@ -189,6 +189,7 @@ func (c *Client) getStructures(action int) (*http.Response, error) {
 
 // setStructure sends the request to the Nest REST API
 func (s *Structure) setStructure(body []byte) *APIError {
+
 	url := s.Client.RedirectURL + "/structures/" + s.StructureID + "?auth=" + s.Client.Token
 	client := &http.Client{}
 	req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(body))
@@ -202,7 +203,7 @@ func (s *Structure) setStructure(body []byte) *APIError {
 		}
 		return apiError
 	}
-	if resp.Request.URL != nil {
+	if resp.StatusCode == 307 {
 		s.Client.RedirectURL = resp.Request.URL.Scheme + "://" + resp.Request.URL.Host
 		url := s.Client.RedirectURL + "/structures/" + s.StructureID + "?auth=" + s.Client.Token
 		req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(body))
@@ -217,6 +218,7 @@ func (s *Structure) setStructure(body []byte) *APIError {
 			return apiError
 		}
 		resp = response
+		return nil
 	}
 	body, _ = ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
